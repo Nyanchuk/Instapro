@@ -1,7 +1,7 @@
 import { goToPage, updatePostsAndGoToPostsPage } from "../index.js";
 import { POSTS_PAGE } from "../routes.js";
 import { createPost, uploadImage } from "../api.js";
-import { getToken } from "../index.js";
+import { getToken, onAddPostClick } from "../index.js";
 
 export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
   let selectedFile = null;
@@ -62,6 +62,9 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
         const uploadedImage = await uploadImage({ file: selectedFile });
         const imageUrl = uploadedImage.url;
 
+
+
+        
         onAddPostClick({
           description: descriptionTextarea.value,
           imageUrl: imageUrl,
@@ -83,7 +86,6 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
         alert("Ошибка чтения файла.");
       }
     });
-
     // Клик по кнопке "назад"
     document.getElementById("back-button").addEventListener("click", () => {
       goToPage(POSTS_PAGE);

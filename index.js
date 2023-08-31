@@ -141,6 +141,13 @@ const renderApp = () => {
     });
   }
 
+  // if (page === ADD_POSTS_PAGE) {
+  //   return renderAddPostPageComponent({
+  //     appEl,
+      
+  //   });
+  // }
+
   if (page === POSTS_PAGE) {
     return renderPostsPageComponent({
       appEl,

@@ -4,7 +4,7 @@
   "description": "MVP аналога популярной соц. сети для обмена фотографиями",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve",
+    "start": "webpack-dev-server",
     "build": "webpack"
   },
   "author": "",
@@ -13,8 +13,12 @@
     "date-fns": "^2.30.0"
   },
   "devDependencies": {
+    "css-loader": "^6.8.1",
     "html-webpack-plugin": "^5.5.3",
+    "style-loader": "^3.3.3",
     "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-middleware": "^6.1.1",
+    "webpack-hot-middleware": "^2.25.4"
   }
 }
