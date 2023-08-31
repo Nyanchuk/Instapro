@@ -1,26 +1,10 @@
 import { goToPage, updatePostsAndGoToPostsPage } from "../index.js";
 import { POSTS_PAGE } from "../routes.js";
-import { createPost } from "../api.js";
+import { createPost, uploadImage } from "../api.js";
 import { getToken } from "../index.js";
 
 export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
   let selectedFile = null;
-
-  const readFileAsDataURL = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-  
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-  
-      reader.onerror = () => {
-        reader.abort();
-        reject(new Error("Error reading file."));
-      };
-      reader.readAsDataURL(file);
-    });
-  };
 
   const render = () => {
   const appHtml = `
@@ -57,8 +41,8 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
   `;
     appEl.innerHTML = appHtml;
 
-    // Находим картинку
     const fileUpload = appEl.querySelector(".file-upload-input");
+    const descriptionTextarea = appEl.querySelector(".input.textarea");
 
     fileUpload.addEventListener("change", (event) => {
       if (event.target.files.length > 0) {
@@ -68,26 +52,24 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
         console.log("Файл не выбран");
       }
     });
-
-    // Находим комментарий к картинке
-    const descriptionTextarea = appEl.querySelector(".input.textarea");
-
-    // Клик по кнопке "добавить"
     document.getElementById("add-button").addEventListener("click", async () => {
       if (!selectedFile) {
         alert('Пожалуйста, выберите файл.');
         return;
       }
       try {
-        const imageDataURL = await readFileAsDataURL(selectedFile);
+        // Загрузка изображения и получение URL
+        const uploadedImage = await uploadImage({ file: selectedFile });
+        const imageUrl = uploadedImage.url;
+
         onAddPostClick({
           description: descriptionTextarea.value,
-          imageUrl: imageDataURL,
+          imageUrl: imageUrl,
         });
         createPost({
           token: getToken(),
           description: descriptionTextarea.value,
-          imageUrl: imageDataURL,
+          imageUrl: imageUrl,
         })
           .then((post) => {
             console.log("Добавленный пост:", post);
@@ -101,6 +83,7 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
         alert("Ошибка чтения файла.");
       }
     });
+
     // Клик по кнопке "назад"
     document.getElementById("back-button").addEventListener("click", () => {
       goToPage(POSTS_PAGE);
