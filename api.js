@@ -29,7 +29,7 @@ export function createPost({ token, description, imageUrl }) {
 }
 
 
-export function getPosts({ token}) {
+export function getPosts({ token }) {
   return fetch(postsHost, {
     method: "GET",
     headers: {

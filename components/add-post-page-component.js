@@ -18,7 +18,6 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
         reader.abort();
         reject(new Error("Error reading file."));
       };
-  
       reader.readAsDataURL(file);
     });
   };
@@ -56,9 +55,9 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
       </div>
     </div>
   `;
-
     appEl.innerHTML = appHtml;
 
+    // Находим картинку
     const fileUpload = appEl.querySelector(".file-upload-input");
 
     fileUpload.addEventListener("change", (event) => {
@@ -70,14 +69,15 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
       }
     });
 
+    // Находим комментарий к картинке
     const descriptionTextarea = appEl.querySelector(".input.textarea");
 
+    // Клик по кнопке "добавить"
     document.getElementById("add-button").addEventListener("click", async () => {
       if (!selectedFile) {
         alert('Пожалуйста, выберите файл.');
         return;
       }
-
       try {
         const imageDataURL = await readFileAsDataURL(selectedFile);
         onAddPostClick({
@@ -101,12 +101,11 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
         alert("Ошибка чтения файла.");
       }
     });
-
+    // Клик по кнопке "назад"
     document.getElementById("back-button").addEventListener("click", () => {
       goToPage(POSTS_PAGE);
     });
   };
-
   render();
 }
 
