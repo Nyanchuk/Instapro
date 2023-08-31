@@ -1,4 +1,4 @@
-import { getPosts } from "./api.js";
+import { getPosts, createPost } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -20,7 +20,7 @@ export let user = getUserFromLocalStorage();
 export let page = null;
 export let posts = [];
 
-const getToken = () => {
+export const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
   return token;
 };
@@ -31,6 +31,22 @@ export const logout = () => {
   goToPage(POSTS_PAGE);
 };
 
+
+export const updatePostsAndGoToPostsPage = () => {
+  page = LOADING_PAGE;
+  renderApp();
+
+  return getPosts({ token: getToken() })
+    .then((newPosts) => {
+      page = POSTS_PAGE;
+      posts = newPosts;
+      renderApp();
+    })
+    .catch((error) => {
+      console.error(error);
+      goToPage(POSTS_PAGE);
+    });
+};
 /**
  * Включает страницу приложения
  */
@@ -111,8 +127,16 @@ const renderApp = () => {
       appEl,
       onAddPostClick({ description, imageUrl }) {
         // TODO: реализовать добавление поста в API
-        console.log("Добавляю пост...", { description, imageUrl });
-        goToPage(POSTS_PAGE);
+        // console.log("Добавляю пост...", { description, imageUrl });
+        // goToPage(POSTS_PAGE);
+        createPost({ token: getToken(), description, imageUrl })
+        .then((post) => {
+          console.log("Добавленный пост:", post);
+          updatePostsAndGoToPostsPage();
+        })
+        .catch((error) => {
+          console.error("Ошибка при добавлении поста:", error);
+        });
       },
     });
   }
@@ -120,6 +144,7 @@ const renderApp = () => {
   if (page === POSTS_PAGE) {
     return renderPostsPageComponent({
       appEl,
+      posts,
     });
   }
 

@@ -52,6 +52,7 @@ p {
   background-color: #565eef;
   color: #ffffff;
   border: none;
+  transition: all .3s;
 }
 
 .link-button {
@@ -67,6 +68,21 @@ p {
   background-color: #6d73ff;
 }
 
+/* Добавляю кнопку назад */
+.button-exit {
+  display: block;
+  padding: 10px 13px 13px;
+  font-size: 18px;
+  line-height: 22px;
+  border-radius: 5px;
+  background-color: #b256efba;
+  color: #ffffff;
+  border: none;
+  transition: all .3s;
+}
+.button-exit:hover {
+  background-color: #b76ee9ba;
+}
 .button[disabled="true"],
 .secondary-button[disabled="true"] {
   background-color: #f4f5f6;
