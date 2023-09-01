@@ -61,11 +61,9 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
         // Загрузка изображения и получение URL
         const uploadedImage = await uploadImage({ file: selectedFile });
         const imageUrl = uploadedImage.url;
-
-
-
         
         onAddPostClick({
+          token: getToken(),
           description: descriptionTextarea.value,
           imageUrl: imageUrl,
         });

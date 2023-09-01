@@ -23,9 +23,9 @@ export function createPost({ token, description, imageUrl }) {
       }
       return response.json();
     })
-    .then((data) => {
-      return data.post;
-    });
+    // .then((data) => {
+    //   return data.post;
+    // });
 }
 
 
