@@ -126,27 +126,17 @@ const renderApp = () => {
     return renderAddPostPageComponent({
       appEl,
       onAddPostClick({ description, imageUrl }) {
-        // TODO: реализовать добавление поста в API
-        // console.log("Добавляю пост...", { description, imageUrl });
-        // goToPage(POSTS_PAGE);
-        createPost({ token: getToken(), description, imageUrl })
-        .then((post) => {
-          console.log("Добавленный пост:", post);
-          updatePostsAndGoToPostsPage();
-        })
-        .catch((error) => {
-          console.error("Ошибка при добавлении поста:", error);
-        });
+        createPost({ token: getToken(), description, imageUrl }) // из файла "api.js"
+          .then((post) => {
+            console.log("Добавленный пост:", post);
+            updatePostsAndGoToPostsPage(); // для получения свежего списка публикаций и перехода на страницу публикаций
+          })
+          .catch((error) => {
+            console.error("Ошибка при добавлении поста:", error);
+          });
       },
     });
   }
-
-  // if (page === ADD_POSTS_PAGE) {
-  //   return renderAddPostPageComponent({
-  //     appEl,
-      
-  //   });
-  // }
 
   if (page === POSTS_PAGE) {
     return renderPostsPageComponent({

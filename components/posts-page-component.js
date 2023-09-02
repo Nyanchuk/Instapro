@@ -10,7 +10,7 @@ function createPostHtml(post) {
   return `
     <li class="post">
       <div class="post-header" data-user-id="${post.user.id}">
-        <img src="${post.user.avatarUrl}" class="post-header__user-image">
+        <img src="${post.user.imageUrl}" class="post-header__user-image">
         <p class="post-header__user-name">${post.user.name}</p>
       </div>
       <div class="post-image-container">

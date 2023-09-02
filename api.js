@@ -9,7 +9,6 @@ export function createPost({ token, description, imageUrl }) {
   return fetch(postsHost, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: token,
     },
     body: JSON.stringify({
@@ -28,9 +27,12 @@ export function createPost({ token, description, imageUrl }) {
     // });
 }
 
+//Новый для провала в посты юзера
+export function getPosts({ userId, token }) {
+  // Проверяет, есть ли userId, и добавляет его в строку URL, если требуется
+  const userIdQueryParam = userId ? `?userId=${userId}` : "";
 
-export function getPosts({ token }) {
-  return fetch(postsHost, {
+  return fetch(postsHost + userIdQueryParam, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -47,6 +49,28 @@ export function getPosts({ token }) {
       return data.posts;
     });
 }
+
+
+
+
+// export function getPosts({ token }) {
+//   return fetch(postsHost, {
+//     method: "GET",
+//     headers: {
+//       Authorization: token,
+//     },
+//   })
+//     .then((response) => {
+//       if (response.status === 401) {
+//         throw new Error("Нет авторизации");
+//       }
+
+//       return response.json();
+//     })
+//     .then((data) => {
+//       return data.posts;
+//     });
+// }
 
 // https://github.com/GlebkaF/webdev-hw-api/blob/main/pages/api/user/README.md#%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D1%8C%D1%81%D1%8F
 export function registerUser({ login, password, name, imageUrl }) {
