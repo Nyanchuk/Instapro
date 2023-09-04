@@ -2,7 +2,6 @@ const personalKey = "julya"; //prod - боевая версия instapro
 const baseHost = "https://webdev-hw-api.vercel.app";
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
 
-
 export function createPost({ token, description, imageUrl }) {
   return fetch(postsHost, {
     method: "POST",
@@ -33,7 +32,6 @@ export function getPosts({ token }) {
       if (response.status === 401) {
         throw new Error("Нет авторизации");
       }
-
       return response.json();
     })
     .then((data) => {
@@ -41,9 +39,8 @@ export function getPosts({ token }) {
     });
 }
 
-// Версия для загрузки постов пользователя
-export const getPostsByUser = ({ token, userId }) => {
-  return fetch(`${baseHost}/api/v1/${personalKey}/instapro?${userId}`, {
+export const getPostsByUser = ({ token, id }) => {
+  return fetch(`${postsHost}/user-posts/${id}`, {
     method: "GET",
     headers: {
       Authorization: token,
