@@ -5,7 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 import ruLocale from "date-fns/locale/ru";
 import { addLike, disLike } from "../api.js";
 
-function createPostHtml(post, index) {
+function createPostHtml(post, index, currentUserName) {
   return `
     <li class="post">
       <div class="post-header" data-user-id="${post.user.id}">
@@ -20,7 +20,7 @@ function createPostHtml(post, index) {
           <img src="${post.isLiked ? './assets/images/like-active.svg' : './assets/images/like-not-active.svg'}">
         </button>
         <p class="post-likes-text">
-          Нравится: <strong>${post.likes}</strong>
+        Нравится: <strong>${post.likes.length}${post.isLiked ? ' (' + currentUserName + ')' : ''}</strong>
         </p>
       </div>
       <p class="post-text">
@@ -71,29 +71,54 @@ export function renderPostsPageComponent({ appEl, posts, userId, token, currentU
 
          // При участии функции из апи
 
-        if (post.isLiked === false) {
+
+         if (post.isLiked === false) {
           addLike({ token, id: post.id })
             .then(() => {
               post.isLiked = true;
               like.querySelector("img").src = './assets/images/like-active.svg';
-              post.likes++;
-              postLikesText.textContent = `${post.likes}` + ' (' + currentUserName + ')';
+              post.likes.push({ id: userId, name: currentUserName });
+              postLikesText.textContent = `${post.likes.length} (${currentUserName})`;
             })
             .catch((error) => {
               console.error("Ошибка при добавлении лайка:", error);
             });
-          } else if (post.isLiked === true) {
-            disLike({ token, id: post.id })
-              .then(() => {
-                post.isLiked = false;
-                like.querySelector("img").src = './assets/images/like-not-active.svg';
-                post.likes--;
-                postLikesText.textContent = post.likes;
-              })
-              .catch((error) => {
-                console.error("Ошибка при удалении лайка:", error);
-              });
-            }
+        } else if (post.isLiked === true) {
+          disLike({ token, id: post.id })
+            .then(() => {
+              post.isLiked = false;
+              like.querySelector("img").src = './assets/images/like-not-active.svg';
+              post.likes = post.likes.filter(like => like.name !== currentUserName);
+              postLikesText.textContent = post.likes.length;
+            })
+            .catch((error) => {
+              console.error("Ошибка при удалении лайка:", error);
+            });
+        }
+
+        // if (post.isLiked === false) {
+        //   addLike({ token, id: post.id })
+        //     .then(() => {
+        //       post.isLiked = true;
+        //       like.querySelector("img").src = './assets/images/like-active.svg';
+        //       post.likes++;
+        //       postLikesText.textContent = `${post.likes}` + ' (' + currentUserName + ')';
+        //     })
+        //     .catch((error) => {
+        //       console.error("Ошибка при добавлении лайка:", error);
+        //     });
+        //   } else if (post.isLiked === true) {
+        //     disLike({ token, id: post.id })
+        //       .then(() => {
+        //         post.isLiked = false;
+        //         like.querySelector("img").src = './assets/images/like-not-active.svg';
+        //         post.likes--;
+        //         postLikesText.textContent = post.likes;
+        //       })
+        //       .catch((error) => {
+        //         console.error("Ошибка при удалении лайка:", error);
+        //       });
+        //     }
         });
       }
     };
