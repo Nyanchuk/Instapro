@@ -3,6 +3,7 @@ import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
 import { formatDistanceToNow } from "date-fns";
 import ruLocale from "date-fns/locale/ru";
+import { addLike, disLike } from "../api.js";
 
 function createPostHtml(post, index) {
   return `
@@ -19,7 +20,7 @@ function createPostHtml(post, index) {
           <img src="${post.isLiked ? './assets/images/like-active.svg' : './assets/images/like-not-active.svg'}">
         </button>
         <p class="post-likes-text">
-          Нравится: <strong>${post.likes}${post.isLiked ? ' (' + post.user.name + ')' : ''}</strong>
+          Нравится: <strong>${post.likes}</strong>
         </p>
       </div>
       <p class="post-text">
@@ -36,7 +37,7 @@ function getPostHtmls(posts) {
   return posts.map(createPostHtml).join('');
 }
 
-export function renderPostsPageComponent({ appEl, posts, userId, token }) {
+export function renderPostsPageComponent({ appEl, posts, userId, token, currentUserName }) {
   console.log("Токен в renderPostsPageComponent:", token);
 
   console.log("Актуальный список постов:", posts);
@@ -58,36 +59,45 @@ export function renderPostsPageComponent({ appEl, posts, userId, token }) {
     const likeButtons = document.querySelectorAll('.like-button');
     for(const like of likeButtons) {
       like.addEventListener('click', (event) => {
-
-        // Проверка на авторизацию
         if (!token) {
           alert('Вы должны войти в систему, чтобы ставить лайки');
           return;
         }
-
         event.stopPropagation();
         const postIndex = parseInt(like.dataset.index, 10);
         const post = posts[postIndex];
         console.log("Current post object:", post)
         const postLikesText = like.closest('.post-likes').querySelector('.post-likes-text strong');
 
+         // При участии функции из апи
+
         if (post.isLiked === false) {
-          post.isLiked = true;
-          like.querySelector("img").src = './assets/images/like-active.svg';
-          post.likes++;
-          postLikesText.textContent = `${post.likes}`; // Пусть пока будут числа без имен  (${post.user.name})
-
-        } else if (post.isLiked === true) {
-          post.isLiked = false;
-          like.querySelector("img").src = './assets/images/like-not-active.svg';
-          post.likes--;
-          postLikesText.textContent = post.likes;
-        }
-      });
-    }
-  };
+          addLike({ token, id: post.id })
+            .then(() => {
+              post.isLiked = true;
+              like.querySelector("img").src = './assets/images/like-active.svg';
+              post.likes++;
+              postLikesText.textContent = `${post.likes}` + ' (' + currentUserName + ')';
+            })
+            .catch((error) => {
+              console.error("Ошибка при добавлении лайка:", error);
+            });
+          } else if (post.isLiked === true) {
+            disLike({ token, id: post.id })
+              .then(() => {
+                post.isLiked = false;
+                like.querySelector("img").src = './assets/images/like-not-active.svg';
+                post.likes--;
+                postLikesText.textContent = post.likes;
+              })
+              .catch((error) => {
+                console.error("Ошибка при удалении лайка:", error);
+              });
+            }
+        });
+      }
+    };
   like(posts, token);
-
 
   renderHeaderComponent({
     element: document.querySelector(".header-container"),
@@ -103,6 +113,30 @@ export function renderPostsPageComponent({ appEl, posts, userId, token }) {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+// СТАРЫЕ УСЛОВИЯ ДЛЯ ЛАЙКА
+
+// if (post.isLiked === false) {
+//   post.isLiked = true;
+//   like.querySelector("img").src = './assets/images/like-active.svg';
+//   post.likes++;
+//   postLikesText.textContent = `${post.likes}`; // Пусть пока будут числа без имен  (${post.user.name})
+
+// } else if (post.isLiked === true) {
+//   post.isLiked = false;
+//   like.querySelector("img").src = './assets/images/like-not-active.svg';
+//   post.likes--;
+//   postLikesText.textContent = post.likes;
+// }
 
 
 
