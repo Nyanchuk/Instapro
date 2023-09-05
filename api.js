@@ -92,3 +92,4 @@ export function uploadImage({ file }) { // Загружает картинку �
     return response.json();
   });
 }
+
