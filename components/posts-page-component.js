@@ -6,6 +6,7 @@ import ruLocale from "date-fns/locale/ru";
 import { addLike, disLike } from "../api.js";
 
 function createPostHtml(post, index, currentUserName) {
+  const likesNames = post.likes.map(like => like.name).join(", ");
   return `
     <li class="post">
       <div class="post-header" data-user-id="${post.user.id}">
@@ -20,7 +21,7 @@ function createPostHtml(post, index, currentUserName) {
           <img src="${post.isLiked ? './assets/images/like-active.svg' : './assets/images/like-not-active.svg'}">
         </button>
         <p class="post-likes-text">
-        Нравится: <strong>${post.likes.length}${post.isLiked ? ' (' + currentUserName + ')' : ''}</strong>
+        Нравится: <strong>${post.likes.length} (${likesNames})</strong>
         </p>
       </div>
       <p class="post-text">
@@ -95,30 +96,6 @@ export function renderPostsPageComponent({ appEl, posts, userId, token, currentU
               console.error("Ошибка при удалении лайка:", error);
             });
         }
-
-        // if (post.isLiked === false) {
-        //   addLike({ token, id: post.id })
-        //     .then(() => {
-        //       post.isLiked = true;
-        //       like.querySelector("img").src = './assets/images/like-active.svg';
-        //       post.likes++;
-        //       postLikesText.textContent = `${post.likes}` + ' (' + currentUserName + ')';
-        //     })
-        //     .catch((error) => {
-        //       console.error("Ошибка при добавлении лайка:", error);
-        //     });
-        //   } else if (post.isLiked === true) {
-        //     disLike({ token, id: post.id })
-        //       .then(() => {
-        //         post.isLiked = false;
-        //         like.querySelector("img").src = './assets/images/like-not-active.svg';
-        //         post.likes--;
-        //         postLikesText.textContent = post.likes;
-        //       })
-        //       .catch((error) => {
-        //         console.error("Ошибка при удалении лайка:", error);
-        //       });
-        //     }
         });
       }
     };
