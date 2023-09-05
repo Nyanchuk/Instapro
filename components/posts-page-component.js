@@ -36,7 +36,8 @@ function getPostHtmls(posts) {
   return posts.map(createPostHtml).join('');
 }
 
-export function renderPostsPageComponent({ appEl, posts, userId }) {
+export function renderPostsPageComponent({ appEl, posts, userId, token }) {
+  console.log("Токен в renderPostsPageComponent:", token);
 
   console.log("Актуальный список постов:", posts);
 
@@ -52,18 +53,22 @@ export function renderPostsPageComponent({ appEl, posts, userId }) {
 
   appEl.innerHTML = appHtml;
 
-
-  const like = (posts) => {
-    console.log(posts);
+  const like = (posts, token) => {
+    console.log("Токен в функции like:", token);
     const likeButtons = document.querySelectorAll('.like-button');
     for(const like of likeButtons) {
       like.addEventListener('click', (event) => {
-        console.log("data-index:", like.dataset.index);
+
+        // Проверка на авторизацию
+        if (!token) {
+          alert('Вы должны войти в систему, чтобы ставить лайки');
+          return;
+        }
+
+        event.stopPropagation();
         const postIndex = parseInt(like.dataset.index, 10);
         const post = posts[postIndex];
         console.log("Current post object:", post)
-
-
         const postLikesText = like.closest('.post-likes').querySelector('.post-likes-text strong');
 
         if (post.isLiked === false) {
@@ -78,13 +83,12 @@ export function renderPostsPageComponent({ appEl, posts, userId }) {
           post.likes--;
           postLikesText.textContent = post.likes;
         }
-        getPostHtmls(posts)
       });
     }
   };
-  like(posts);
+  like(posts, token);
 
-  
+
   renderHeaderComponent({
     element: document.querySelector(".header-container"),
   });
@@ -97,6 +101,20 @@ export function renderPostsPageComponent({ appEl, posts, userId }) {
     });
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
