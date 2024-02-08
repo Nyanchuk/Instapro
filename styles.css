@@ -93,6 +93,10 @@
   cursor: pointer;
 }
 
+/* .like-button.liked img {
+  filter: hue-rotate(325deg);
+} */
+
 .user-name {
   font-weight: 500;
 }
